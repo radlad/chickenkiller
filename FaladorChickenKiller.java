@@ -24,6 +24,7 @@ import org.powerbot.core.script.job.state.Node;
 import org.powerbot.core.script.job.state.Tree;
 import org.powerbot.game.api.Manifest;
 import org.powerbot.game.api.methods.Game;
+import org.powerbot.game.api.methods.Widgets;
 import org.powerbot.game.api.methods.input.Mouse;
 import org.powerbot.game.api.methods.interactive.NPCs;
 import org.powerbot.game.api.methods.interactive.Players;
@@ -117,7 +118,8 @@ public class FaladorChickenKiller extends ActiveScript implements PaintListener,
 	@Override
 	public void onRepaint(Graphics g1) {
 	       Graphics2D g = (Graphics2D)g1;
-	        g.setRenderingHints(antialiasing);
+	       Graphics2D g2 = (Graphics2D)g1;
+	        g2.setRenderingHints(antialiasing);
 	        GroundItem item = GroundItems.getNearest(LootFilter);
 	        NPC n = NPCs.getNearest(MobFilter);
 	        if (toggleDrawing) {
@@ -187,10 +189,10 @@ public class FaladorChickenKiller extends ActiveScript implements PaintListener,
 	        g.fillRect(318, 372, (int) getExpBarLength(3, 200), 15);
 	        g.setColor(color2);
 	        g.drawRect(317, 371, 201, 16);
-	        g.setFont(font1);
-	        g.drawString("FaladorChickenKiller", 9, 370);
-	        g.setColor(color3);
-	        g.drawString("FaladorChickenKiller", 8, 369);
+	        g2.setFont(font1);
+	        g2.drawString("FaladorChickenKiller", 9, 370);
+	        g2.setColor(color3);
+	        g2.drawString("FaladorChickenKiller", 8, 369);
 	        g.setFont(font2);
 	        g.setColor(color4);
 	        g.drawString("Pause", 22, 351);
@@ -352,6 +354,10 @@ public class FaladorChickenKiller extends ActiveScript implements PaintListener,
 			oldKills = killCounter;	
 			lootTries = 0;
 			
+			if (Widgets.get(1218, 73).isOnScreen()) {
+				Widgets.get(1218, 73).click(true);
+			}
+			
 			if (n == null) {
 				status = "Waiting for chicken...";
 				Task.sleep(50);				
@@ -390,6 +396,10 @@ public class FaladorChickenKiller extends ActiveScript implements PaintListener,
 	        int currentPitch = Camera.getPitch();
 	        int currentAngle = Camera.getYaw();
 			GroundItem item = GroundItems.getNearest(LootFilter);
+			
+			if (Widgets.get(1218, 73).isOnScreen()) {
+				Widgets.get(1218, 73).click(true);
+			}
 							
 			if (item != null) {
 				if (!item.isOnScreen()) {
