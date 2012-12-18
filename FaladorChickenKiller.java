@@ -68,6 +68,7 @@ public class FaladorChickenKiller extends ActiveScript implements PaintListener,
 	public static int featherPrice = featherGE.getPrice();
 	public static int totalProfit;
 	public static int stackSize;
+	public static int lootTries;
 	
 	public static int killCounter;
 	public static int oldKills;
@@ -177,17 +178,13 @@ public class FaladorChickenKiller extends ActiveScript implements PaintListener,
 	        g.setColor(color2);
 	        g.drawRect(443, 340, 69, 15);
 	        g.setColor(color1);
-	        //g.fillRect(317, 355, 201, 16);
 	        g.setColor(color_skill);
-	       // g.fillRect(318, 356, (int) getExpBarLength(chosenSkill, 200), 15);
-	        g.fillRect(318, 356, 100, 15);
+	        g.fillRect(318, 356, (int) getExpBarLength(chosenSkill, 200), 15);
 	        g.setColor(color2);
 	        g.drawRect(317, 355, 201, 16);
 	        g.setColor(color1);
-	       // g.fillRect(317, 371, 201, 16);
 	        g.setColor(color_const);
-	        //g.fillRect(318, 372, (int) getExpBarLength(3, 200), 15);
-	        g.fillRect(318, 372, 200, 15);
+	        g.fillRect(318, 372, (int) getExpBarLength(3, 200), 15);
 	        g.setColor(color2);
 	        g.drawRect(317, 371, 201, 16);
 	        g.setFont(font1);
@@ -236,7 +233,7 @@ public class FaladorChickenKiller extends ActiveScript implements PaintListener,
 	        g.drawString("Status: " + status, 135, 369);
 	        g.setColor(color6);
 	        if (skillString == "Not Chosen!") {
-		        g.drawString("Choose a skill by clicking \"Skill to Track\".", 322, 367);
+		        g.drawString("Choose a skill by clicking \"Skill to Track\"", 322, 367);
 	        } else {
 		        g.drawString("[ " + skillString + ": " + Skills.getRealLevel(chosenSkill) + " (+" + (Skills.getRealLevel(chosenSkill) - startLevel) + ") | " + kFormat(getXpHr(chosenSkill)) + " xp/h | TTL: " + getTTNL(chosenSkill) + " ]", 322, 367);
 	        }
@@ -289,13 +286,12 @@ public class FaladorChickenKiller extends ActiveScript implements PaintListener,
 			if (killCounter - oldKills < 1) {
 			killCounter+=1;
 			}
-		}		
-		if (featherCounter < (oldFeathers+stackSize)) {
-			featherCounter = featherCounter + stackSize;
-			totalProfit = featherCounter*featherPrice;
 		}
 		
-		
+		if ((featherCounter < (oldFeathers+stackSize)) && lootTries == 0) {			
+				featherCounter = featherCounter + stackSize;
+				totalProfit = featherCounter*featherPrice;
+		}		
 		return 50;
 	}
 	
@@ -313,6 +309,7 @@ public class FaladorChickenKiller extends ActiveScript implements PaintListener,
 			startTime = System.currentTimeMillis();
 			oldKills = killCounter;	
 			oldFeathers = featherCounter;
+			lootTries = 0;
 			for (int i : chickenIDs) {
 				Chickens.add(i);
 			}
@@ -353,6 +350,7 @@ public class FaladorChickenKiller extends ActiveScript implements PaintListener,
 			NPC n = NPCs.getNearest(MobFilter);
 			Player p = Players.getLocal();
 			oldKills = killCounter;	
+			lootTries = 0;
 			
 			if (n == null) {
 				status = "Waiting for chicken...";
@@ -392,9 +390,7 @@ public class FaladorChickenKiller extends ActiveScript implements PaintListener,
 	        int currentPitch = Camera.getPitch();
 	        int currentAngle = Camera.getYaw();
 			GroundItem item = GroundItems.getNearest(LootFilter);
-			oldFeathers = featherCounter;
-			stackSize = item.getGroundItem().getStackSize();
-			
+							
 			if (item != null) {
 				if (!item.isOnScreen()) {
 					System.out.println("Turning to feathers.");
@@ -405,7 +401,8 @@ public class FaladorChickenKiller extends ActiveScript implements PaintListener,
 					status = "Picking up feathers.";
 						if(item.click(false) && Menu.isOpen() && Menu.contains("Take")) {						
 							Menu.select("Take", item.getGroundItem().getName());
-							//featherCounter = featherCounter + item.getGroundItem().getStackSize();							
+							oldFeathers = featherCounter;			
+							stackSize = item.getGroundItem().getStackSize();
 						}
 					Mouse.move(currentMouseX + Random.nextInt(-20, 20), currentMouseY + Random.nextInt(-20, 20));
 					Camera.setPitch(currentPitch + Random.nextInt(20, 70));
