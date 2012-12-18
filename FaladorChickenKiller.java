@@ -231,8 +231,8 @@ public class FaladorChickenKiller extends ActiveScript implements PaintListener,
 	        g.setFont(font3);
 	        g.setColor(color5);
 	        g.drawString("Run Time: " + runTime.toElapsedString(), 8, 382);
-	        g.drawString("Killed: " + killCounter + " ( " + getPerHour(killCounter) + " p/h )", 115, 382);
-	        g.drawString("Profit: " + kFormat(totalProfit) + " ( " + kFormat(getPerHour(totalProfit)) + " p/h )", 210, 382);
+	        g.drawString("Killed: " + killCounter + " ( " + getPerHour(killCounter) + " p/h )", 105, 382);
+	        g.drawString("Profit: " + kFormat(totalProfit) + " ( " + kFormat(getPerHour(totalProfit)) + " p/h )", 200, 382);
 	        g.drawString("Status: " + status, 135, 369);
 	        g.setColor(color6);
 	        if (skillString == "Not Chosen!") {
