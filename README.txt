@@ -1,4 +1,4 @@
-FaladorChickenKiller
+MondoChickens
 =======
 //Installation instructions:
 
@@ -9,7 +9,7 @@ FaladorChickenKiller
          (folder) bin
          (folder) src
 
-2) Extract FaladorChickenKiller.java to the "src" folder
+2) Extract MondoChickens.java to the "src" folder
 3) Compile the src folder (instructions can be found on forums)
 4) Create shortcut to "RSBot.jar" and add "-dev" to the shortcut parameters
 5) Run!
