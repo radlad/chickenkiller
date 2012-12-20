@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.powerbot.core.event.events.MessageEvent;
+import org.powerbot.core.event.listeners.MessageListener;
 import org.powerbot.core.event.listeners.PaintListener;
 import org.powerbot.core.script.ActiveScript;
 import org.powerbot.core.script.job.Job;
@@ -44,7 +46,7 @@ import org.powerbot.game.api.wrappers.interactive.Player;
 import org.powerbot.game.api.wrappers.node.GroundItem;
 
 @Manifest(authors = { "nootz" }, name = "MondoChickens", description = "Gain some quick levels and money.", version = 1.0 )
-public class MondoChickens extends ActiveScript implements PaintListener, MouseListener {
+public class MondoChickens extends ActiveScript implements PaintListener, MouseListener, MessageListener {
 	
 	public static Area FaladorChickens = new Area(new Tile[] { new Tile(3012, 3299, 0), new Tile(3020, 3299, 0), new Tile(3020, 3281, 0), 
 			new Tile(3012, 3281, 0) });
@@ -81,10 +83,12 @@ public class MondoChickens extends ActiveScript implements PaintListener, MouseL
 	public static int oldFeathers;
 	
 	public static Timer runTime = new Timer(0);	
+	public static Timer chatTimer = new Timer(0);	
 	public static long startTime;
 	public static boolean paused;
 	public static boolean toggleDrawing = true;;
 	public static boolean skillSelectOpen;
+	public static boolean chatWarning = false;
 	
 	
 	public static String status = "Waiting...";
@@ -99,6 +103,8 @@ public class MondoChickens extends ActiveScript implements PaintListener, MouseL
     private final Color color5 = new Color(237, 237, 237, 160);
     private final Color color6 = new Color(255, 255, 255, 200);
     private final Color color7 = new Color(255, 0, 0, 200);
+    private final Color color8 = new Color(0, 0, 0, 160);
+
     public static Color color_skill = new Color(0, 0, 0, 255);
     public static Color color_const = new Color(255, 43, 43, 170);
     public final static Color color_mouse = new Color(250, 250, 250, 200);
@@ -119,6 +125,10 @@ public class MondoChickens extends ActiveScript implements PaintListener, MouseL
     private final Font font1 = new Font("Myriad Pro", 1, 12);
     private final Font font2 = new Font("Myriad Pro", 1, 10);
     private final Font font3 = new Font("Myriad Pro", 0, 10);
+    
+    private final Font font4 = new Font("Myriad Pro", 1, 32);
+    private final Font font5 = new Font("Myriad Pro", 0, 16);
+
 	    
 	@Override
 	public void onRepaint(Graphics g1) {
@@ -250,6 +260,21 @@ public class MondoChickens extends ActiveScript implements PaintListener, MouseL
 		        g.drawString("[ " + skillString + ": " + Skills.getRealLevel(chosenSkill) + " (+" + (Skills.getRealLevel(chosenSkill) - startLevel) + ") | " + kFormat(getXpHr(chosenSkill)) + " xp/h | TTL: " + getTTNL(chosenSkill) + " ]", 322, 367);
 	        }
 	        g.drawString("[ Constitution: " + Skills.getRealLevel(3) + " (+" + (Skills.getRealLevel(3) - startConstLevel) + ") | " + kFormat(getXpHr(3)) + " | TTL: " + getTTNL(3) + " ]", 322, 383);
+	        
+	        if (chatWarning && chatTimer.isRunning()) {
+		        g.setColor(color8);
+		        g.fillRect(236, 414, 255, 67);
+		        g.setColor(color7);
+		        g.setStroke(stroke1);
+		        g.drawRect(236, 414, 255, 67);
+		        g.setFont(font4);
+		        g.drawString("WARNING", 299, 449);
+		        g.setFont(font5);
+		        g.drawString("Last Message: " + chatTimer.toElapsedString() + " ago", 278, 467);
+		        g.drawLine(474, 420, 484, 430);
+		        g.drawLine(474, 430, 484, 420);
+	        }
+
 
     }
 
@@ -496,6 +521,7 @@ public class MondoChickens extends ActiveScript implements PaintListener, MouseL
 		final Rectangle skillDef = new Rectangle(425, 280, 87, 14);
 		final Rectangle skillMag = new Rectangle(425, 260, 87, 14);
 		final Rectangle skillRng = new Rectangle(425, 240, 87, 14);
+		final Rectangle closeWarning = new Rectangle(474, 420, 484, 430);
 		
 		if(pauseBot.contains(p.getPoint())) {
 			paused = !paused;
@@ -506,7 +532,6 @@ public class MondoChickens extends ActiveScript implements PaintListener, MouseL
         }
 		if (skillSelect.contains(p.getPoint())) {
 			skillSelectOpen = !skillSelectOpen;
-			
 		}
 		if (skillAtk.contains(p.getPoint()) && skillSelectOpen) {
 			skillString = "Attack";
@@ -538,6 +563,9 @@ public class MondoChickens extends ActiveScript implements PaintListener, MouseL
 			color_skill = new Color(168, 108, 39, 170);
 			startLevel = startRngLevel;
 		}
+		if (closeWarning.contains(p.getPoint()) && chatWarning) {
+			chatWarning = !chatWarning;
+		}
 		
 	}
 
@@ -566,6 +594,15 @@ public class MondoChickens extends ActiveScript implements PaintListener, MouseL
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void messageReceived(MessageEvent m) {		
+		if (((m.getSender() != "") || (m.getSender() != "News"))) {
+			chatWarning = true;
+			chatTimer = new Timer(20000);	
+		}
 		
 	}
 	
