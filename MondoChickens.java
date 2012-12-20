@@ -96,7 +96,7 @@ public class MondoChickens extends ActiveScript implements PaintListener, MouseL
 	 final RenderingHints antialiasing = new RenderingHints(
 	            RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-    private final Color color1 = new Color(0, 0, 0, 200);
+    private final Color color1 = new Color(0, 0, 0, 180);
     private final Color color2 = new Color(0, 0, 0);
     private final Color color3 = new Color(237, 237, 237, 226);
     private final Color color4 = new Color(169, 169, 169, 226);
@@ -110,9 +110,9 @@ public class MondoChickens extends ActiveScript implements PaintListener, MouseL
     public final static Color color_mouse = new Color(250, 250, 250, 200);
     public final static Color color_mouse_opa = new Color(222, 222, 222, 150);
     public static Color color_item = new Color(107, 216, 255, 225);
-    public static Color color_item2 = new Color(120, 180, 202, 120);
+    public static Color color_item2 = new Color(120, 180, 202, 100);
     public static Color color_chicken = new Color(255, 221, 85, 225);
-    public static Color color_chicken2 = new Color(238, 238, 124, 120);
+    public static Color color_chicken2 = new Color(238, 238, 124, 100);
     public static Color color_player = new Color(255, 110, 0, 225);
     public static Color color_player2 = new Color(235, 159, 102, 220);
     public static Color color_player3 = new Color(255, 34, 41, 225);
@@ -140,7 +140,7 @@ public class MondoChickens extends ActiveScript implements PaintListener, MouseL
 	        if (toggleDrawing) {
 		        if (item != null) {
 		        	drawTile(g1, item.getLocation(), color_item, 225);
-		        	fillTile(g1, item.getLocation(), color_item2, 220);
+		        	fillTile(g1, item.getLocation(), color_item2, 100);
 		        	g1.setFont(font2);	  
 		        	g1.setColor(Color.BLACK);
 		        	g1.drawString(item.getGroundItem().getName() + " x" + item.getGroundItem().getStackSize(),
@@ -151,7 +151,7 @@ public class MondoChickens extends ActiveScript implements PaintListener, MouseL
 		        }	        
 		        if (n != null) {
 		        	drawTile(g1, n.getLocation(), color_chicken, 225);
-		        	fillTile(g1, n.getLocation(), color_chicken2, 220);
+		        	fillTile(g1, n.getLocation(), color_chicken2, 100);
 	        		g1.setFont(font2); 	        		
 		        	g1.setColor(Color.BLACK);
 		        	g1.drawString(n.getName(), (int) n.getCentralPoint().getX()+26, (int) (n.getCentralPoint().getY()+1));
@@ -599,7 +599,7 @@ public class MondoChickens extends ActiveScript implements PaintListener, MouseL
 
 	@Override
 	public void messageReceived(MessageEvent m) {		
-		if (((m.getSender() != "") || (m.getSender() != "News"))) {
+		if ((!m.getSender().equals("")) || (!m.getSender().equals("News"))) {
 			chatWarning = true;
 			chatTimer = new Timer(20000);	
 		}
