@@ -12,7 +12,6 @@ import java.awt.event.MouseListener;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,7 +29,6 @@ import org.powerbot.game.api.methods.interactive.NPCs;
 import org.powerbot.game.api.methods.interactive.Players;
 import org.powerbot.game.api.methods.node.GroundItems;
 import org.powerbot.game.api.methods.node.Menu;
-import org.powerbot.game.api.methods.tab.Inventory;
 import org.powerbot.game.api.methods.tab.Skills;
 import org.powerbot.game.api.methods.widget.Camera;
 import org.powerbot.game.api.util.Filter;
@@ -45,14 +43,20 @@ import org.powerbot.game.api.wrappers.interactive.NPC;
 import org.powerbot.game.api.wrappers.interactive.Player;
 import org.powerbot.game.api.wrappers.node.GroundItem;
 
-@Manifest(authors = { "nootz" }, name = "FaladorChickenKiller", description = "Gain some quick levels and money.", version = 1.0 )
-public class FaladorChickenKiller extends ActiveScript implements PaintListener, MouseListener {
+@Manifest(authors = { "nootz" }, name = "MondoChickens", description = "Gain some quick levels and money.", version = 1.0 )
+public class MondoChickens extends ActiveScript implements PaintListener, MouseListener {
 	
 	public static Area FaladorChickens = new Area(new Tile[] { new Tile(3012, 3299, 0), new Tile(3020, 3299, 0), new Tile(3020, 3281, 0), 
 			new Tile(3012, 3281, 0) });
+	public static Area ChampGuildChickens = new Area(new Tile[] { new Tile(3194, 3361, 0), new Tile(3199, 3361, 0), new Tile(3199, 3351, 0), 
+			new Tile(3194, 3351, 0) });
+	public static Area LumbridgeEastChickens = new Area(new Tile[] { new Tile(3223, 3302, 0), new Tile(3237, 3302, 0), new Tile(3237, 3291, 0), 
+			new Tile(3230, 3291, 0), new Tile(3230, 3294, 0), new Tile(3223, 3294, 0) });
+	public static Area LumbridgeWestChickens = new Area(new Tile[] { new Tile(3183, 3280, 0), new Tile(3192, 3280, 0), new Tile(3192, 3276, 0), 
+			new Tile(3183, 3276, 0) });
 	
 	public static ArrayList<Integer> Chickens = new ArrayList<Integer>();
-	public static int[] chickenIDs = { 2313, 2314, 2315 };
+	public static int[] chickenIDs = { 2313, 2314, 2315, 1017, 41 };
 	public static int featherID = 314;
 	public static boolean showSkillMenu;
 	public static String skillString = "Not Chosen!";
@@ -94,6 +98,7 @@ public class FaladorChickenKiller extends ActiveScript implements PaintListener,
     private final Color color4 = new Color(169, 169, 169, 226);
     private final Color color5 = new Color(237, 237, 237, 160);
     private final Color color6 = new Color(255, 255, 255, 200);
+    private final Color color7 = new Color(255, 0, 0, 200);
     public static Color color_skill = new Color(0, 0, 0, 255);
     public static Color color_const = new Color(255, 43, 43, 170);
     public final static Color color_mouse = new Color(250, 250, 250, 200);
@@ -190,9 +195,14 @@ public class FaladorChickenKiller extends ActiveScript implements PaintListener,
 	        g.setColor(color2);
 	        g.drawRect(317, 371, 201, 16);
 	        g2.setFont(font1);
-	        g2.drawString("FaladorChickenKiller", 9, 370);
+	        g2.drawString("MondoChickens", 9, 370);
 	        g2.setColor(color3);
-	        g2.drawString("FaladorChickenKiller", 8, 369);
+	        g2.drawString("MondoChickens", 8, 369);
+	        g2.setFont(font2);
+	        g2.setColor(color2);
+	        g2.drawString("v1.0", 100, 370);
+	        g2.setColor(color7);
+	        g2.drawString("v1.0", 99, 369);
 	        g.setFont(font2);
 	        g.setColor(color4);
 	        g.drawString("Pause", 22, 351);
@@ -230,8 +240,8 @@ public class FaladorChickenKiller extends ActiveScript implements PaintListener,
 	        g.setFont(font3);
 	        g.setColor(color5);
 	        g.drawString("Run Time: " + runTime.toElapsedString(), 8, 382);
-	        g.drawString("Killed: " + killCounter + " ( " + getPerHour(killCounter) + " p/h )", 105, 382);
-	        g.drawString("Profit: " + kFormat(totalProfit) + " ( " + kFormat(getPerHour(totalProfit)) + " p/h )", 200, 382);
+	        g.drawString("Killed: " + killCounter + " ( " + getPerHour(killCounter) + " p/h )", 100, 382);
+	        g.drawString("Profit: " + kFormat(totalProfit) + " ( " + kFormat(getPerHour(totalProfit)) + " p/h )", 205, 382);
 	        g.drawString("Status: " + status, 135, 369);
 	        g.setColor(color6);
 	        if (skillString == "Not Chosen!") {
@@ -327,7 +337,9 @@ public class FaladorChickenKiller extends ActiveScript implements PaintListener,
 		public boolean accept(NPC n) {
 			for (int i : Chickens) {
 				return n != null && Chickens.contains(n.getId()) && n.getLocation().canReach() 
-						&& FaladorChickens.contains(n.getLocation()) && n.getHpPercent() > 0 &&	!n.isInCombat();	
+						&& (FaladorChickens.contains(n.getLocation()) || ChampGuildChickens.contains(n.getLocation()) || 
+						LumbridgeEastChickens.contains(n.getLocation()) || LumbridgeWestChickens.contains(n.getLocation()))
+						&& n.getHpPercent() > 0 && !n.isInCombat() && !n.getLocation().equals(Players.getLocal().getLocation());	
 			}
 			return false;
 		}
@@ -336,7 +348,9 @@ public class FaladorChickenKiller extends ActiveScript implements PaintListener,
 	public static Filter<GroundItem> LootFilter = new Filter<GroundItem>(){
 		@Override
 		public boolean accept(GroundItem n) {			
-				return n != null && n.getLocation().canReach() && FaladorChickens.contains(n.getLocation()) && n.getId() == featherID;
+				return n != null && n.getLocation().canReach() && (FaladorChickens.contains(n.getLocation()) || 
+						ChampGuildChickens.contains(n.getLocation()) || LumbridgeEastChickens.contains(n.getLocation()) ||
+						LumbridgeWestChickens.contains(n.getLocation())) && n.getId() == featherID;
 		}		
 	};	
 	
@@ -371,7 +385,7 @@ public class FaladorChickenKiller extends ActiveScript implements PaintListener,
 					}					
 				} else if (!n.isOnScreen()) {
 					Camera.setPitch(Random.nextInt(1, 25));
-					Camera.turnTo(n);				
+					Camera.turnTo(n, Random.nextInt(-50, 50));				
 					status = "Finding chicken.";
 					System.out.println("Finding chicken.");
 				}
@@ -423,6 +437,7 @@ public class FaladorChickenKiller extends ActiveScript implements PaintListener,
 		}
 		
 	}
+
 	
 	public static NumberFormat k = new DecimalFormat("###,###,###");
 	public static NumberFormat z = new DecimalFormat("#");
