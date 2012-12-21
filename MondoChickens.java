@@ -599,7 +599,7 @@ public class MondoChickens extends ActiveScript implements PaintListener, MouseL
 
 	@Override
 	public void messageReceived(MessageEvent m) {		
-		if ((!m.getSender().equals("")) || (!m.getSender().equals("News"))) {
+		if (m.getId() == 2) {
 			chatWarning = true;
 			chatTimer = new Timer(20000);	
 		}
